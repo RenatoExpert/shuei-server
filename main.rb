@@ -3,7 +3,7 @@ require 'socket'
 server = TCPServer.new 2000
 
 # Setup database
-require 'dbi'
+require 'pg'
 db_type = "PostgreSQL"
 db_name = "JANUSDB"
 db_host = "localhost"
@@ -12,16 +12,12 @@ db_pswd = "pi"
 
 begin
   # connect to POSTgres server
-  dbh = DBI.connect("DBI:#{db_type}:#{db_name}:#{db_host}", db_user, db_pswd)
-  server_version = dbh.select_one("SELECT VERSION()")
+  conn = PG.connect(dbname: db_name)
+  server_version = conn.select_one("SELECT VERSION()")
   puts "Server version: " + row[0]
-rescue DBI::DatabaseError => e
-  puts "An error occurred"
-  puts "Error code: #{e.err}"
-  puts "Error message: #{e.errstr}"
 ensure
   # disconnect from server
-  dbh.disconnect if dbh
+  conn.disconnect if conn
 end
 
 
