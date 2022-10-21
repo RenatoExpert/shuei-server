@@ -16,7 +16,7 @@ begin
   puts 'connected'
 ensure
   # disconnect from server
-  conn.disconnect if conn
+  conn.close if conn
 end
 
 
