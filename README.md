@@ -1,4 +1,4 @@
-# Janus Server
+# 守衛サーバ Shuei Server
 
 ## Development info and goals
 ### Database
