@@ -1,20 +1,18 @@
 
 def create_table (name, *columns)
   columns.length > 0 ||  columns = ['id int', 'name varchar(255)']
-  puts columns.join(', ')
   $db.execute <<~SQL
     CREATE TABLE IF NOT EXISTS #{name}(
-      #{columns}
+      #{columns.join("', '")}
     );
   SQL
+  p "testing:: #{columns} ::"
 end
 
 def insert_row (table, *values)
-  asks = []
-  for i in 0...values.length
-    asks.push('?')
-  end
-  $db.execute "INSERT INTO #{table} VALUES (#{asks.join(', ')})", values
+  values = values.join(', ')
+  p values
+  $db.execute "INSERT INTO #{table} VALUES ('#{values}')"
 end
 
 BEGIN {
@@ -40,7 +38,7 @@ BEGIN {
 }
 
 create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
-create_table 'logs', 'id INTEGER AUTOINCREMENT', 'timestamp TEXT', 'devuid TEXT', 'devaddr TEXT', 'priority TEXT', 'message TEXT'
+create_table 'logs', 'id integer primary key autoincrement', 'timestamp TEXT', 'devuid TEXT', 'devaddr TEXT', 'priority TEXT', 'message TEXT'
 
 END {
   loop do
@@ -52,7 +50,7 @@ END {
       priority = block['priority']
       message = block['message']
       puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
-      insert_row 'logs', devuid, devaddr, priority, message
+      insert_row 'logs', timestamp, devuid, devaddr, priority, message
       client.puts "Hello !"
       client.close
     end
