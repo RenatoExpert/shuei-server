@@ -16,7 +16,5 @@ Slave devices sends its status info in a json format to server. Server responds 
 If no response from server is got in some attempts, it will get into _Alert Mode_.
 This JSON table provides:
 * Device UUID
-* Peripheral 1 Status
-* Peripheral 2 Status
-* Peripheral 3 Status
-
+* Priority (as systemd does)
+* Message
