@@ -39,17 +39,19 @@ BEGIN {
 }
 
 create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
-create_table 'logs', 'id', 'timestamp', 'priority', 'message'
+create_table 'logs', 'id', 'timestamp', 'devuid', 'devaddr', 'priority', 'message'
 insert_row 'logs', 'josh', 'bet', 'jaman', 'rick'
 
 END {
   loop do
     Thread.start(server.accept) do |client|
-      block = JSON.parse!(client.gets)
-      message = block['message']
-      address = client.peeraddr[2]
       timestamp = Time.now
-      puts "[#{timestamp}]#{address}: #{message}"
+      block = JSON.parse!(client.gets)
+      devuid = block['devuid']
+      devaddr = client.peeraddr[2]
+      priority = block['priority']
+      message = block['message']
+      puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
       client.puts "Hello !"
       client.close
     end
