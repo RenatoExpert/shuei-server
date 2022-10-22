@@ -10,7 +10,7 @@ def create_table (name, *columns)
 end
 
 def insert_row (table, *values)
-  values = values.join(', ')
+  values = values.join("', '")
   p values
   $db.execute "INSERT INTO #{table} VALUES ('#{values}')"
 end
@@ -38,7 +38,7 @@ BEGIN {
 }
 
 create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
-create_table 'logs', 'id integer primary key autoincrement', 'timestamp TEXT', 'devuid TEXT', 'devaddr TEXT', 'priority TEXT', 'message TEXT'
+create_table 'logs', 'ID INTEGER PRIMARY KEY AUTOINCREMENT', 'timestamp TEXT', 'devuid TEXT', 'devaddr TEXT', 'priority TEXT', 'message TEXT'
 
 END {
   loop do
