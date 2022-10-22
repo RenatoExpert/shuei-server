@@ -40,9 +40,11 @@ BEGIN {
 create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
 create_table 'logs', 'ID INTEGER PRIMARY KEY AUTOINCREMENT', 'timestamp TEXT', 'devuid TEXT', 'devaddr TEXT', 'priority TEXT', 'message TEXT'
 
+lognum = 0
 END {
   loop do
     Thread.start(server.accept) do |client|
+      lognum+=1
       timestamp = Time.now
       block = JSON.parse!(client.gets)
       devuid = block['devuid']
@@ -50,7 +52,7 @@ END {
       priority = block['priority']
       message = block['message']
       puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
-      insert_row 'logs', timestamp, devuid, devaddr, priority, message
+      insert_row 'logs', lognum, timestamp, devuid, devaddr, priority, message
       client.puts "Hello !"
       client.close
     end
