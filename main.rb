@@ -23,7 +23,9 @@ BEGIN {
 
   # Setup tcp socket
   require 'socket'
-  server = TCPServer.new 2000
+  port = 2000
+  server = TCPServer.new port
+  puts "Serving at #{port}"
 
   # Setup database
   require 'sqlite3'
