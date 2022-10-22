@@ -1,9 +1,15 @@
 
 def create_table (name, *columns)
+  columns.length > 0 ||  columns = ['id int', 'name varchar(255)']
+  het = ''
+  for i in 0...columns.length
+    het << "#{columns[i]}"
+    i == columns.length - 1 ||  het << ', '
+  end
+  puts het
   $db.execute <<~SQL
     CREATE TABLE IF NOT EXISTS #{name}(
-      title varchar(255),
-      category varchar(255)
+      #{het}
     );
   SQL
 end
@@ -23,7 +29,8 @@ BEGIN {
   system('touch db/database.db')
   $db = SQLite3::Database.open "db/database.db"
 }
-  create_table 'ola', 'sol'
+  create_table 'ola', 'sol', 'praia'
+  puts 'cabou'
 
 END {
   loop do
