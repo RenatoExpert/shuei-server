@@ -1,15 +1,9 @@
 
 def create_table (name, *columns)
   columns.length > 0 ||  columns = ['id int', 'name varchar(255)']
-  het = ''
-  for i in 0...columns.length
-    het << "#{columns[i]}"
-    i == columns.length - 1 ||  het << ', '
-  end
-  puts het
   $db.execute <<~SQL
     CREATE TABLE IF NOT EXISTS #{name}(
-      #{het}
+      #{columns.join(',')}
     );
   SQL
 end
