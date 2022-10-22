@@ -1,6 +1,6 @@
 
-def create_table (db, name, *columns)
-  db.execute <<~SQL
+def create_table (name, *columns)
+  $db.execute <<~SQL
     CREATE TABLE Tasks(
       title varchar(255),
       category varchar(255)
@@ -21,9 +21,9 @@ BEGIN {
   require 'sqlite3'
   system('mkdir -p db')
   system('touch db/database.db')
-  db = SQLite3::Database.open "db/database.db"
+  $db = SQLite3::Database.open "db/database.db"
 }
-  create_table db, 'ola', 'sol'
+  create_table 'ola', 'sol'
 
 END {
   loop do
