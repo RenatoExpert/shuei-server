@@ -3,6 +3,7 @@
 ## Development info and goals
 ### Database
 |Setting	|Value|
+| ----- 	|---|
 |Software	|SQLite|
 |Port		||
 |Database	|janusdb|
