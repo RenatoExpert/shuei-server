@@ -9,8 +9,8 @@
 |Database	|janusdb|
 |User		|janus|
 |Password	|pi|
-- [ ] Connects
-- [ ] Create table
+- [x] Connects
+- [x] Create table
 - [ ] Insert row
 - [ ] Select
 
