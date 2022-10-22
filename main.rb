@@ -17,11 +17,12 @@ BEGIN {
   puts 'connected'
 }
 
-
-loop do
-  Thread.start(server.accept) do |client|
-    puts client.gets
-    client.puts "Hello !"
-    client.close
+END {
+  loop do
+    Thread.start(server.accept) do |client|
+      puts client.gets
+      client.puts "Hello !"
+      client.close
+    end
   end
-end
+}
