@@ -32,6 +32,10 @@ BEGIN {
   system('mkdir -p db')
   system('touch db/database.db')
   $db = SQLite3::Database.open "db/database.db"
+
+  # JSON decoder
+  require 'json'
+
 }
 
 create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
@@ -41,7 +45,11 @@ insert_row 'logs', 'josh', 'bet', 'jaman', 'rick'
 END {
   loop do
     Thread.start(server.accept) do |client|
-      puts "[#{Time.now}]#{client.peeraddr[2]}: #{client.gets}"
+      block = JSON.parse!(client.gets)
+      message = block['message']
+      address = client.peeraddr[2]
+      timestamp = Time.now
+      puts "[#{timestamp}]#{address}: #{message}"
       client.puts "Hello !"
       client.close
     end
