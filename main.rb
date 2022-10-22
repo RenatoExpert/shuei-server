@@ -1,7 +1,7 @@
 
 def create_table (name, *columns)
   $db.execute <<~SQL
-    CREATE TABLE IF NOT EXISTS Tasks(
+    CREATE TABLE IF NOT EXISTS #{name}(
       title varchar(255),
       category varchar(255)
     );
