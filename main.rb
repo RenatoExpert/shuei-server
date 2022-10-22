@@ -41,7 +41,7 @@ insert_row 'logs', 'josh', 'bet', 'jaman', 'rick'
 END {
   loop do
     Thread.start(server.accept) do |client|
-      puts client.gets
+      puts "[#{Time.now}]#{client.peeraddr[2]}: #{client.gets}"
       client.puts "Hello !"
       client.close
     end
