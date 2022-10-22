@@ -3,20 +3,12 @@ require 'socket'
 server = TCPServer.new 2000
 
 # Setup database
-require 'pg'
-db_type = "PostgreSQL"
-db_name = "janusdb"
-db_host = "localhost"
-db_user = "janus"
-db_pswd = "pi"
+require 'sqlite3'
 
 begin
-  # connect to POSTgres server
-  conn = PG.connect(dbname: db_name, user: db_user)
+  # handling sqlite service
+  db = SQLite3::Database.open "db/database.db"
   puts 'connected'
-ensure
-  # disconnect from server
-  conn.close if conn
 end
 
 
