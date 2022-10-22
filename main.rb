@@ -1,3 +1,13 @@
+
+def create_table (db, name, *columns)
+  db.execute <<~SQL
+    CREATE TABLE Tasks(
+      title varchar(255),
+      category varchar(255)
+    );
+  SQL
+end
+
 BEGIN {
   # Setup Gems
   system 'gem install bundler --conservative'
@@ -11,11 +21,9 @@ BEGIN {
   require 'sqlite3'
   system('mkdir -p db')
   system('touch db/database.db')
-
-  # handling sqlite service
   db = SQLite3::Database.open "db/database.db"
-  puts 'connected'
 }
+  create_table db, 'ola', 'sol'
 
 END {
   loop do
@@ -26,3 +34,4 @@ END {
     end
   end
 }
+
