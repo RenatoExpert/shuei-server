@@ -3,7 +3,7 @@ def create_table (name, *columns)
   columns.length > 0 ||  columns = ['id int', 'name varchar(255)']
   $db.execute <<~SQL
     CREATE TABLE IF NOT EXISTS #{name}(
-      #{columns.join("', '")}
+      #{columns.join(", ")}
     );
   SQL
   p "testing:: #{columns} ::"
