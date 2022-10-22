@@ -1,19 +1,24 @@
 
-def create_table (name, *columns)
-  columns.length > 0 ||  columns = ['id int', 'name varchar(255)']
+def create_table (name, *values)
+  values.length > 0 ||  values = ['id int', 'name varchar(255)']
   $db.execute <<~SQL
     CREATE TABLE IF NOT EXISTS #{name}(
-      #{columns.join(", ")}
+      #{values.join(", ")}
     );
   SQL
-  p "testing:: #{columns} ::"
 end
 
-def insert_row (table, *values)
+def insert_row (table, columns, *values)
+  col_list = columns ? "('#{columns.join("', '")}')" : ' '
   values = values.join("', '")
   p values
-  $db.execute "INSERT INTO #{table} VALUES ('#{values}')"
+  $db.execute "INSERT INTO #{table}  #{col_list} VALUES ('#{values}')"
 end
+
+def insert_log (timestamp, devuid, devaddr, priority, message)
+  insert_row 'logs', ['timestamp', 'devuid', 'devaddr', 'priority', 'message'], timestamp, devuid, devaddr, priority, message
+end
+
 
 BEGIN {
   # Setup Gems
@@ -40,11 +45,10 @@ BEGIN {
 create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
 create_table 'logs', 'ID INTEGER PRIMARY KEY AUTOINCREMENT', 'timestamp TEXT', 'devuid TEXT', 'devaddr TEXT', 'priority TEXT', 'message TEXT'
 
-lognum = 0
+
 END {
   loop do
     Thread.start(server.accept) do |client|
-      lognum+=1
       timestamp = Time.now
       block = JSON.parse!(client.gets)
       devuid = block['devuid']
@@ -52,7 +56,7 @@ END {
       priority = block['priority']
       message = block['message']
       puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
-      insert_row 'logs', lognum, timestamp, devuid, devaddr, priority, message
+      insert_log timestamp, devuid, devaddr, priority, message
       client.puts "Hello !"
       client.close
     end
