@@ -8,5 +8,5 @@ We're currently using SQLite3
 - [ ] Insert row
 - [ ] Select
 What do we need to store:
-- Slave devices: Hardware UUID, Name, current IP
-- General log: Log-id, Dev UUID, Timestamp, Priority, Message
+* Slave devices: Hardware UUID, Name, current IP
+* General log: Log-id, Dev UUID, Timestamp, Priority, Message
