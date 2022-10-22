@@ -14,6 +14,14 @@ def create_table (name, *columns)
   SQL
 end
 
+def insert_row (table, *values)
+  asks = []
+  for i in 0...values.length
+    asks.push('?')
+  end
+  $db.execute "INSERT INTO #{table} VALUES (#{asks.join(', ')})", values
+end
+
 BEGIN {
   # Setup Gems
   system 'gem install bundler --conservative'
@@ -29,8 +37,10 @@ BEGIN {
   system('touch db/database.db')
   $db = SQLite3::Database.open "db/database.db"
 }
-  create_table 'ola', 'sol', 'praia'
-  puts 'cabou'
+
+create_table 'slaves', 'huuid', 'tagname', 'curIP', 'GPIO_Status'
+create_table 'logs', 'id', 'timestamp', 'priority', 'message'
+insert_row 'logs', 'josh', 'bet', 'jaman', 'rick'
 
 END {
   loop do
