@@ -28,6 +28,11 @@ BEGIN {
   # Setup tcp socket
   require 'socket'
   port = 2000
+  if ARGV.length > 1
+    for i in 0...ARGV.length 
+      port = ARGV[i]=="-p" ? ARGV[i+1] : port
+    end
+  end
   server = TCPServer.new port
   puts "Serving at #{port}"
 
