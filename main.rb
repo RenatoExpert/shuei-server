@@ -55,16 +55,22 @@ END {
   loop do
     Thread.start(server.accept) do |client|
       puts 'got a new connection'
-      timestamp = Time.now
-      block = JSON.parse!(client.gets)
-      devuid = block['devuid']
-      devaddr = client.peeraddr[2]
-      priority = block['priority']
-      message = block['message']
-      puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
-      insert_log timestamp, devuid, devaddr, priority, message
       client.puts "Hello !"
-      client.close
+      timestamp = Time.now
+      begin
+        block = JSON.parse!(client.gets)
+        devuid = block['devuid']
+        devaddr = client.peeraddr[2]
+        priority = block['priority']
+        message = block['message']
+        puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
+        insert_log timestamp, devuid, devaddr, priority, message
+      rescue
+        puts "Error on parsing"
+        client.puts "Error on parsing"
+      ensure
+        client.close
+      end
     end
   end
 }
