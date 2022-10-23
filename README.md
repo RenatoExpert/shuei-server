@@ -1,4 +1,4 @@
-# 守衛サーバ Shuei Server
+# Shuei Server 守衛サーバ 
 
 ## Development info and goals
 ### Database
