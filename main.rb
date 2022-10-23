@@ -33,7 +33,7 @@ BEGIN {
       port = ARGV[i]=="-p" ? ARGV[i+1] : port
     end
   end
-  server = TCPServer.new port
+  server = TCPServer.new('0.0.0.0', port)
   puts "Serving at #{port}"
 
   # Setup database
@@ -54,6 +54,7 @@ create_table 'logs', 'ID INTEGER PRIMARY KEY AUTOINCREMENT', 'timestamp TEXT', '
 END {
   loop do
     Thread.start(server.accept) do |client|
+      puts 'got a new connection'
       timestamp = Time.now
       block = JSON.parse!(client.gets)
       devuid = block['devuid']
