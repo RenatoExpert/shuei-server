@@ -59,11 +59,10 @@ END {
       timestamp = Time.now
       begin
         block = JSON.parse!(client.gets)
-        devuid = block['devuid']
-        priority = block['priority']
-        message = block['message']
-        puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
-        insert_log timestamp, devuid, devaddr, priority, message
+        uuid = block['uuid']
+        gstatus = block['gstatus']
+        puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
+        insert_log timestamp, uuid, devaddr, gstatus, cmd
       rescue
         puts "Error on parsing"
         client.puts "Error on parsing"
