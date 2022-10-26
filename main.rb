@@ -62,7 +62,8 @@ END {
         uuid = block['uuid']
         gstatus = block['gstatus']
         puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-        insert_log timestamp, uuid, devaddr, gstatus, cmd
+        #insert_log timestamp, uuid, devaddr, gstatus, cmd
+        client.puts "0"
       rescue
         puts "Error on parsing"
         client.puts "Error on parsing"
