@@ -64,6 +64,12 @@ END {
         puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
         #insert_log timestamp, uuid, devaddr, gstatus, cmd
         client.puts "0"
+        exit_code = client.gets
+        if exit_code == '0' 
+          puts "uuid #{uuid} returns #{exit_code}"
+        else 
+          raise Exception.new "uuid #{uuid} returns #{exit_code}"
+        end
       rescue
         puts "Error on parsing"
         client.puts "Error on parsing"
