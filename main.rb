@@ -54,13 +54,12 @@ create_table 'logs', 'ID INTEGER PRIMARY KEY AUTOINCREMENT', 'timestamp TEXT', '
 END {
   loop do
     Thread.start(server.accept) do |client|
-      puts 'got a new connection'
-      client.puts "Hello !"
+      devaddr = client.peeraddr[2]
+      puts "New connection from #{devaddr}"
       timestamp = Time.now
       begin
         block = JSON.parse!(client.gets)
         devuid = block['devuid']
-        devaddr = client.peeraddr[2]
         priority = block['priority']
         message = block['message']
         puts "[#{timestamp}] uid:#{devuid} ip:#{devaddr} (#{priority}) : #{message}"
