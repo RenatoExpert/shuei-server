@@ -63,7 +63,7 @@ END {
         gstatus = block['gstatus']
         puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
         #insert_log timestamp, uuid, devaddr, gstatus, cmd
-        client.puts "0"
+        client.puts '{"cmd":"rest"}'
         exit_code = client.gets
         if exit_code == '0' 
           puts "uuid #{uuid} returns #{exit_code}"
