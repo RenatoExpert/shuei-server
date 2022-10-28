@@ -67,7 +67,7 @@ END {
       # In case of client
       elsif ctype=='client'
         begin
-          client.puts gstates
+          client.puts JSON.generate(gstates)
         end
       end
     end
