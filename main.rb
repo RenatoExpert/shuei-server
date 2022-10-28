@@ -36,30 +36,39 @@ END {
       devaddr = client.peeraddr[2]
       puts "New connection from #{devaddr}"
       timestamp = Time.now
-      begin
-        block = JSON.parse!(client.gets)
-        uuid = block['uuid']
-        gstatus = block['gstatus']
-        puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-        #insert_log timestamp, uuid, devaddr, gstatus, cmd
-        client.puts '{"cmd":"upgrade"}'
+      block = JSON.parse!(client.gets)
+      ctype = block['type']
+      # If its a controller
+      if ctype=='controller'
         begin
-          exit_code = client.gets
-          case exit_code
-          when 0
-            puts "Pop command"
-          # May use something to decode Unix errno, even if code runs in another OS
-          #when 1...200 etc
-          else
-            raise "aaaa"
+          uuid = block['uuid']
+          gstatus = block['gstatus']
+          puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
+          #insert_log timestamp, uuid, devaddr, gstatus, cmd
+          client.puts '{"cmd":"upgrade"}'
+          begin
+            exit_code = client.gets
+            case exit_code
+            when 0
+              puts "Pop command"
+            # May use something to decode Unix errno, even if code runs in another OS
+            #when 1...200 etc
+            else
+              raise "aaaa"
+            end
+          rescue
+            puts "Bad exit code"
+          ensure
+            puts "uuid #{uuid} returns #{exit_code}"
           end
-        rescue
-          puts "Bad exit code"
         ensure
-          puts "uuid #{uuid} returns #{exit_code}"
+          client.close
         end
-      ensure
-        client.close
+      # In case of client
+      elsif ctype=='client'
+        begin
+          puts client.gets
+        end
       end
     end
   end
