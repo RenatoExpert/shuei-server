@@ -17,7 +17,6 @@ BEGIN {
 
   # Setup database
   require_relative "database"
-  require 'sqlite3'
   system('mkdir -p db')
   system('touch db/database.db')
   database = Database.new("db/database.db")

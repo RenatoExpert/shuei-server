@@ -1,3 +1,4 @@
+require 'sqlite3'
 class Database
   def initialize (dbpath)
     $db = SQLite3::Database.open(dbpath)
