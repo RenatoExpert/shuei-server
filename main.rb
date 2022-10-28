@@ -24,14 +24,14 @@ BEGIN {
   # JSON decoder
   require 'json'
 
-  # To-do list
-  todo = {}
-
+  todo = {} # To-do list
+  gstates = {} # A state string for each device
 }
 
 END {
   loop do
     Thread.start(server.accept) do |client|
+      puts gstates
       devaddr = client.peeraddr[2]
       puts "New connection from #{devaddr}"
       timestamp = Time.now
@@ -39,11 +39,12 @@ END {
       ctype = block['type']
       # If its a controller
       if ctype=='controller'
-        todo[uuid]||= []
         begin
           uuid = block['uuid']
           gstatus = block['gstatus']
           puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
+          todo[uuid]||= []
+          gstates[uuid] = gstatus
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
           client.puts '{"cmd":"upgrade"}'
           begin
