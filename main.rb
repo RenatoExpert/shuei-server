@@ -24,6 +24,9 @@ BEGIN {
   # JSON decoder
   require 'json'
 
+  # To-do list
+  $todo = {}
+
 }
 
 END {
