@@ -63,16 +63,22 @@ END {
         gstatus = block['gstatus']
         puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
         #insert_log timestamp, uuid, devaddr, gstatus, cmd
-        client.puts '{"cmd":"rest"}'
-        exit_code = client.gets
-        if exit_code == '0' 
+        client.puts '{"cmd":"upgrade"}'
+        begin
+          exit_code = client.gets
+          case exit_code
+          when 0
+            puts "Pop command"
+          # May use something to decode Unix errno, even if code runs in another OS
+          #when 1...200 etc
+          else
+            raise "aaaa"
+          end
+        rescue
+          puts "Bad exit code"
+        ensure
           puts "uuid #{uuid} returns #{exit_code}"
-        else 
-          raise Exception.new "uuid #{uuid} returns #{exit_code}"
         end
-      rescue
-        puts "Error on parsing"
-        client.puts "Error on parsing"
       ensure
         client.close
       end
