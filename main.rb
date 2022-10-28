@@ -1,4 +1,3 @@
-require_relative "database"
 
 BEGIN {
   # Setup Gems
@@ -17,10 +16,11 @@ BEGIN {
   puts "Serving at #{port}"
 
   # Setup database
+  require_relative "database"
   require 'sqlite3'
   system('mkdir -p db')
   system('touch db/database.db')
-  $db = SQLite3::Database.open "db/database.db"
+  database = Database.new("db/database.db")
 
   # JSON decoder
   require 'json'
