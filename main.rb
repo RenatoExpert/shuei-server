@@ -25,13 +25,14 @@ BEGIN {
   require 'json'
 
   # To-do list
-  $todo = {}
+  todo = {}
 
 }
 
 END {
   loop do
     Thread.start(server.accept) do |client|
+      todo[uuid]||= []
       devaddr = client.peeraddr[2]
       puts "New connection from #{devaddr}"
       timestamp = Time.now
