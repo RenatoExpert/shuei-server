@@ -32,7 +32,6 @@ BEGIN {
 END {
   loop do
     Thread.start(server.accept) do |client|
-      todo[uuid]||= []
       devaddr = client.peeraddr[2]
       puts "New connection from #{devaddr}"
       timestamp = Time.now
@@ -40,6 +39,7 @@ END {
       ctype = block['type']
       # If its a controller
       if ctype=='controller'
+        todo[uuid]||= []
         begin
           uuid = block['uuid']
           gstatus = block['gstatus']
