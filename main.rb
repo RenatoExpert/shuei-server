@@ -31,12 +31,11 @@ BEGIN {
 END {
   loop do
     Thread.start(server.accept) do |client|
-      puts gstates
       devaddr = client.peeraddr[2]
-      puts "New connection from #{devaddr}"
       timestamp = Time.now
       block = JSON.parse!(client.gets)
       ctype = block['type']
+      puts "New connection type:#{ctype} ip:#{devaddr}"
       # If its a controller
       if ctype=='controller'
         begin
@@ -68,7 +67,7 @@ END {
       # In case of client
       elsif ctype=='client'
         begin
-          puts client.gets
+          client.puts gstates
         end
       end
     end
