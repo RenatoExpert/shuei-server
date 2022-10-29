@@ -46,15 +46,17 @@ END {
           gstates[uuid] = gstatus
           puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
-          command = {}
+          command = {
+            "cmd" => "rest"
+          }
           for item in command_stack
             if item["uuid"] == uuid
-              command = JSON.generate(command)
+              command = item
               command_stack.delete(item)
               break
             end
           end
-          client.puts command
+          client.puts JSON.generate(command)
           if command['cmd']!='rest'
             begin
               exit_code = client.gets
