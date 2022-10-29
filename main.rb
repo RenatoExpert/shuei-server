@@ -25,8 +25,8 @@ BEGIN {
   # JSON decoder
   require 'json'
 
-  todo = {} # To-do list
-  gstates = {} # A state string for each device
+  commands = {} # To-do list | Receive from Client and send to Controllers
+  gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
 
 END {
@@ -36,6 +36,7 @@ END {
       timestamp = Time.now
       block = JSON.parse!(client.gets)
       ctype = block['type']
+      puts block
       puts "New connection type:#{ctype} ip:#{devaddr}"
       # If its a controller
       if ctype=='controller'
@@ -69,6 +70,7 @@ END {
         end
       # In case of client
       elsif ctype=='client'
+        #puts block
         client.puts JSON.generate(gstates)
       end
       client.close
