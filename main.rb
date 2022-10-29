@@ -45,33 +45,34 @@ END {
           todo[uuid]||= []
           gstates[uuid] = gstatus
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
-          client.puts '{ "cmd": "rest" }'
-          begin
-            exit_code = client.gets
-            case exit_code
-            when 0
-              puts "Pop command"
-            # May use something to decode Unix errno, even if code runs in another OS
-            #when 1...200 etc
-            else
-              raise "aaaa"
+          cmd = 'rest'
+          client.puts '{ "cmd": "#{cmd}" }\n'
+          puts 'i sent'
+          if cmd!='rest'
+            puts 'should not be here'
+            begin
+              exit_code = client.gets
+              case exit_code
+              when 0
+                puts "Pop command"
+              # May use something to decode Unix errno, even if code runs in another OS
+              #when 1...200 etc
+              else
+                raise "aaaa"
+              end
+            rescue
+              puts "Bad exit code"
+            ensure
+              puts "uuid #{uuid} returns #{exit_code}"
             end
-          rescue
-            puts "Bad exit code"
-          ensure
-            puts "uuid #{uuid} returns #{exit_code}"
           end
-        ensure
-          client.close
         end
       # In case of client
       elsif ctype=='client'
-        begin
-          client.puts JSON.generate(gstates)
-        ensure
-          client.close
-        end
+        client.puts JSON.generate(gstates)
       end
+      client.close
+      puts 'closed'
     end
   end
 }
