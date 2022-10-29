@@ -26,7 +26,7 @@ BEGIN {
   require 'json'
 
   # Stacks
-  commands = {} # To-do list | Receive from Client and send to Controllers
+  commands = [] # To-do list | Receive from Client and send to Controllers
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
 
@@ -68,6 +68,8 @@ END {
           end
         end
       elsif ctype=='client' # In case of client
+        commands = block['commands']
+        
         client.puts JSON.generate(gstates)
       end
       client.close
