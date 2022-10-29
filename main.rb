@@ -44,7 +44,6 @@ END {
           uuid = block['uuid']
           gstatus = block['gstatus']
           puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-          todo[uuid]||= []
           gstates[uuid] = gstatus
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
           cmd = 'rest'
