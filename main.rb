@@ -46,7 +46,7 @@ END {
           gstates[uuid] = gstatus
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
           cmd = 'rest'
-          client.puts '{ "cmd": "#{cmd}" }\n'
+          client.puts '{ "cmd": "#{cmd}" }'
           puts 'i sent'
           if cmd!='rest'
             puts 'should not be here'
