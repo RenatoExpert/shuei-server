@@ -43,13 +43,18 @@ END {
         begin
           uuid = block['uuid']
           gstatus = block['gstatus']
-          puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
           gstates[uuid] = gstatus
+          puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
-          cmd = 'rest'
-          pkg = "{ \"cmd\": \"#{cmd}\" }"
-          client.puts pkg
-          if cmd!='rest'
+          command = {}
+          for item in commands
+            if item["uuid"] == uuid
+              command = JSON.generate(command)
+              break
+            end
+          end
+          client.puts command
+          if command['cmd']!='rest'
             begin
               exit_code = client.gets
               case exit_code
