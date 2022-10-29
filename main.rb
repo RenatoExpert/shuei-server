@@ -26,13 +26,14 @@ BEGIN {
   require 'json'
 
   # Stacks
-  commands = [] # To-do list | Receive from Client and send to Controllers
+  command_stack = [] # To-do list | Receive from Client and send to Controllers
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
 
 END {
   loop do
     Thread.start(server.accept) do |client|
+      puts "Command stack #{command_stack}"
       timestamp = Time.now
       devaddr = client.peeraddr[2]
       block = JSON.parse!(client.gets)
@@ -69,7 +70,9 @@ END {
         end
       elsif ctype=='client' # In case of client
         commands = block['commands']
-        
+        for command in commands
+          command_stack.append(command)
+        end
         client.puts JSON.generate(gstates)
       end
       client.close
