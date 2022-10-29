@@ -47,9 +47,10 @@ END {
           puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
           command = {}
-          for item in commands
+          for item in command_stack
             if item["uuid"] == uuid
               command = JSON.generate(command)
+              command_stack.delete(item)
               break
             end
           end
