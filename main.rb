@@ -45,7 +45,7 @@ END {
           todo[uuid]||= []
           gstates[uuid] = gstatus
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
-          client.puts '{"cmd":"upgrade"}'
+          client.puts '{ "cmd": "rest" }'
           begin
             exit_code = client.gets
             case exit_code
@@ -68,6 +68,8 @@ END {
       elsif ctype=='client'
         begin
           client.puts JSON.generate(gstates)
+        ensure
+          client.close
         end
       end
     end
