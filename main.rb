@@ -6,13 +6,14 @@ BEGIN {
 
   # Setup tcp socket
   require 'socket'
+  host = '0.0.0.0'
   port = 2000
   if ARGV.length > 1
     for i in 0...ARGV.length 
       port = ARGV[i]=="-p" ? ARGV[i+1] : port
     end
   end
-  server = TCPServer.new('0.0.0.0', port)
+  server = TCPServer.new(host, port)
   puts "Serving at #{port}"
 
   # Setup database
@@ -46,7 +47,9 @@ END {
           gstates[uuid] = gstatus
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
           cmd = 'rest'
-          client.puts '{ "cmd": "#{cmd}" }'
+          pkg = "{ \"cmd\": \"#{cmd}\" }"
+          puts pkg
+          client.puts pkg
           puts 'i sent'
           if cmd!='rest'
             puts 'should not be here'
