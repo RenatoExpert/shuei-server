@@ -48,11 +48,8 @@ END {
           #insert_log timestamp, uuid, devaddr, gstatus, cmd
           cmd = 'rest'
           pkg = "{ \"cmd\": \"#{cmd}\" }"
-          puts pkg
           client.puts pkg
-          puts 'i sent'
           if cmd!='rest'
-            puts 'should not be here'
             begin
               exit_code = client.gets
               case exit_code
