@@ -25,6 +25,7 @@ BEGIN {
   # JSON decoder
   require 'json'
 
+  # Stacks
   commands = {} # To-do list | Receive from Client and send to Controllers
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
@@ -32,14 +33,12 @@ BEGIN {
 END {
   loop do
     Thread.start(server.accept) do |client|
-      devaddr = client.peeraddr[2]
       timestamp = Time.now
+      devaddr = client.peeraddr[2]
       block = JSON.parse!(client.gets)
       ctype = block['type']
-      puts block
-      puts "New connection type:#{ctype} ip:#{devaddr}"
-      # If its a controller
-      if ctype=='controller'
+      puts "New connection ip:#{devaddr} block:#{block}"
+      if ctype=='controller'  # In case of controller
         begin
           uuid = block['uuid']
           gstatus = block['gstatus']
@@ -68,9 +67,7 @@ END {
             end
           end
         end
-      # In case of client
-      elsif ctype=='client'
-        #puts block
+      elsif ctype=='client' # In case of client
         client.puts JSON.generate(gstates)
       end
       client.close
