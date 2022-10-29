@@ -72,7 +72,6 @@ END {
         client.puts JSON.generate(gstates)
       end
       client.close
-      puts 'closed'
     end
   end
 }
