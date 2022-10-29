@@ -63,6 +63,8 @@ END {
               puts exit_code
               if exit_code == 0
                 puts "Pop command"
+              else
+                raise "uuid:#{uuid} Not successful"
               # May use something to decode Unix errno, even if code runs in another OS
               # when 1...200 etc
               end
