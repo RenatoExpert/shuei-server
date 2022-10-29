@@ -60,13 +60,11 @@ END {
           if command['cmd']!='rest'
             begin
               exit_code = client.gets
-              case exit_code
-              when 0
+              puts exit_code
+              if exit_code == 0
                 puts "Pop command"
               # May use something to decode Unix errno, even if code runs in another OS
-              #when 1...200 etc
-              else
-                raise "aaaa"
+              # when 1...200 etc
               end
             rescue
               puts "Bad exit code"
