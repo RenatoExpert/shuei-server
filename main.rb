@@ -52,7 +52,7 @@ END {
           for item in command_stack
             if item["uuid"] == uuid
               command = item
-              command_stack.delete(item)
+              command_stack.delete(command)
               break
             end
           end
