@@ -36,14 +36,13 @@ BEGIN { # These methods should be in another ruby script
     loop do
       begin
         gpio_status = controller.gets
-        send_status (gpio_status)
+        #send_status (gpio_status)
         # Register on gstates
         block = JSON.parse!(gpio_status)
         uuid = block['uuid']
         gstates[uuid] = block['gstatus']
       rescue
         controller.close
-        controllers.reject{|item| item==controller}
         break
       end
     end
@@ -56,7 +55,6 @@ BEGIN { # These methods should be in another ruby script
         send_command (message)
       rescue
         client.close
-        clients.reject{|item| item==client}
         break
       end
     end
