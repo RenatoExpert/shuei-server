@@ -39,8 +39,7 @@ def listen_controller(controller)
       # Register on gstates
       block = JSON.parse!(gpio_status)
       uuid = block['uuid']
-      gstatus = block['gstatus']
-      gstates[uuid] = gstatus
+      gstates[uuid] = block['gstatus']
     rescue
       controller.close
       controllers.reject{|item| item==controller}
