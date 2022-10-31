@@ -57,6 +57,18 @@ def listen_client(client)
   end
 end
 
+def send_status(message)
+  for client in clients
+    client.puts message
+  end
+end
+
+def send_command(message)
+  for controller in controllers
+    controller.puts message
+  end
+end
+
 END {
   loop do
     Thread.start(server.accept) do |client|
