@@ -33,12 +33,11 @@ BEGIN {
 END {
   loop do
     Thread.start(server.accept) do |client|
-      timestamp = Time.now
       devaddr = client.peeraddr[2]
       block = JSON.parse!(client.gets)
-      ctype = block['type']
+      timestamp = Time.now
       puts "New connection ip:#{devaddr} block:#{block}"
-      if ctype=='controller'  # In case of controller
+      if block['type'] == 'controller'  # In case of controller
         begin
           uuid = block['uuid']
           gstatus = block['gstatus']
@@ -74,7 +73,7 @@ END {
             end
           end
         end
-      elsif ctype=='client' # In case of client
+      elsif block ['type'] == 'client' # In case of client
         commands = block['commands']
         for command in commands
           command_stack.append(command)
