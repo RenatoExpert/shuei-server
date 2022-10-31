@@ -37,7 +37,7 @@ END {
       devaddr = client.peeraddr[2]
       block = JSON.parse!(client.gets)
       timestamp = Time.now
-      puts "New connection ip:#{devaddr} block:#{block}"
+      puts "[#{timestamp}]New connection ip:#{devaddr} block:#{block}"
       if block['type'] == 'controller'  # In case of controller
         uuid = block['uuid']
         gstatus = block['gstatus']
@@ -45,13 +45,8 @@ END {
         puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
         #insert_log timestamp, uuid, devaddr, gstatus, cmd
       elsif block ['type'] == 'client' # In case of client
-        commands = block['commands']
-        for command in commands
-          command_stack.append(command)
-        end
         client.puts JSON.generate(gstates)
       end
-      client.close
     end
   end
 }
