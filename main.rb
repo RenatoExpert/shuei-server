@@ -26,6 +26,8 @@ BEGIN {
   require 'json'
 
   # Stacks
+  controllers = []
+  clients = []
   command_stack = [] # To-do list | Receive from Client and send to Controllers
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
