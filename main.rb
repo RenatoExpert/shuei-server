@@ -28,7 +28,6 @@ BEGIN {
   # Stacks
   controllers = []
   clients = []
-  command_stack = [] # To-do list | Receive from Client and send to Controllers
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
 
@@ -40,41 +39,11 @@ END {
       timestamp = Time.now
       puts "New connection ip:#{devaddr} block:#{block}"
       if block['type'] == 'controller'  # In case of controller
-        begin
-          uuid = block['uuid']
-          gstatus = block['gstatus']
-          gstates[uuid] = gstatus
-          puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-          #insert_log timestamp, uuid, devaddr, gstatus, cmd
-          command = {
-            "cmd" => "rest"
-          }
-          for item in command_stack
-            if item["uuid"] == uuid
-              command = item
-              command_stack.delete(command)
-              break
-            end
-          end
-          client.puts JSON.generate(command)
-          if command['cmd']!='rest'
-            begin
-              exit_code = client.gets
-              puts exit_code
-              if exit_code == 0
-                puts "Pop command"
-              else
-                raise "uuid:#{uuid} Not successful"
-              # May use something to decode Unix errno, even if code runs in another OS
-              # when 1...200 etc
-              end
-            rescue
-              puts "Bad exit code"
-            ensure
-              puts "uuid #{uuid} returns #{exit_code}"
-            end
-          end
-        end
+        uuid = block['uuid']
+        gstatus = block['gstatus']
+        gstates[uuid] = gstatus
+        puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
+        #insert_log timestamp, uuid, devaddr, gstatus, cmd
       elsif block ['type'] == 'client' # In case of client
         commands = block['commands']
         for command in commands
