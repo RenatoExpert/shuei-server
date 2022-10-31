@@ -79,18 +79,22 @@ END {
       puts controllers
       puts clients
       devaddr = newcomer.peeraddr[2]
-      block = JSON.parse!(newcomer.gets)
-      type = block['type']
-      if type == 'controller'  # In case of controller
-        uuid = block['uuid']
-        puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
-        controllers.append(newcomer)
-        listen_controller(newcomer)
-      elsif type == 'client' # In case of client
-        puts "New connection ip:#{devaddr} type:#{type}"
-        clients.append(newcomer)
-        newcomer.puts JSON.generate(gstates)
-        listen_client(newcomer)
+      begin
+        block = JSON.parse!(newcomer.gets)
+        type = block['type']
+        if type == 'controller'  # In case of controller
+          uuid = block['uuid']
+          puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
+          controllers.append(newcomer)
+          listen_controller(newcomer)
+        elsif type == 'client' # In case of client
+          puts "New connection ip:#{devaddr} type:#{type}"
+          clients.append(newcomer)
+          newcomer.puts JSON.generate(gstates)
+          listen_client(newcomer)
+        end
+      rescue
+        newcomer.close
       end
     end
   end
