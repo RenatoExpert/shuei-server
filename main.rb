@@ -31,6 +31,19 @@ BEGIN {
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
 
+def listen_controller(controller)
+  loop do
+    begin
+      message = controller.gets
+      send_status (message)
+    rescue
+      controller.close
+      controllers.reject( |item| item==controller)
+      break
+    end
+  end
+end
+
 END {
   loop do
     Thread.start(server.accept) do |client|
