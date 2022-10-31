@@ -44,6 +44,19 @@ def listen_controller(controller)
   end
 end
 
+def listen_client(client)
+  loop do
+    begin
+      message = client.gets
+      send_command (message)
+    rescue
+      client.close
+      clients.reject ( |item| item==client)
+      break
+    end
+  end
+end
+
 END {
   loop do
     Thread.start(server.accept) do |client|
