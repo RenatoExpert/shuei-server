@@ -78,6 +78,7 @@ END {
       puts "[#{timestamp}]New connection ip:#{devaddr} block:#{block}"
       if block['type'] == 'controller'  # In case of controller
         controllers.append(client)
+        listen_controller(client)
         uuid = block['uuid']
         gstatus = block['gstatus']
         gstates[uuid] = gstatus
@@ -86,6 +87,7 @@ END {
       elsif block ['type'] == 'client' # In case of client
         client.puts JSON.generate(gstates)
         clients.append(client)
+        listen_client(client)
       end
     end
   end
