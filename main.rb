@@ -38,7 +38,7 @@ def listen_controller(controller)
       send_status (message)
     rescue
       controller.close
-      controllers.reject( |item| item==controller)
+      controllers.reject{|item| item==controller}
       break
     end
   end
@@ -51,7 +51,7 @@ def listen_client(client)
       send_command (message)
     rescue
       client.close
-      clients.reject ( |item| item==client)
+      clients.reject{|item| item==client}
       break
     end
   end
