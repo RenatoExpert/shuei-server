@@ -74,8 +74,7 @@ END {
     Thread.start(server.accept) do |newcomer|
       devaddr = newcomer.peeraddr[2]
       block = JSON.parse!(newcomer.gets)
-      timestamp = Time.now
-      puts "[#{timestamp}]New connection ip:#{devaddr} block:#{block}"
+      puts "New connection ip:#{devaddr} block:#{block}"
       if block['type'] == 'controller'  # In case of controller
         controllers.append(newcomer)
         listen_controller(newcomer)
@@ -83,7 +82,6 @@ END {
         gstatus = block['gstatus']
         gstates[uuid] = gstatus
         puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-        #insert_log timestamp, uuid, devaddr, gstatus, cmd
       elsif block ['type'] == 'client' # In case of client
         newcomer.puts JSON.generate(gstates)
         clients.append(newcomer)
