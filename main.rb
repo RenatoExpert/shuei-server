@@ -33,7 +33,6 @@ BEGIN {
 END {
   loop do
     Thread.start(server.accept) do |client|
-      puts "Command stack #{command_stack}"
       timestamp = Time.now
       devaddr = client.peeraddr[2]
       block = JSON.parse!(client.gets)
