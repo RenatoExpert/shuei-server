@@ -31,47 +31,49 @@ BEGIN {
   gstates = {} # A state string for each device | Receive from Controllers and send to Client
 }
 
-def listen_controller(controller)
-  loop do
-    begin
-      gpio_status = controller.gets
-      send_status (gpio_status)
-      # Register on gstates
-      block = JSON.parse!(gpio_status)
-      uuid = block['uuid']
-      gstates[uuid] = block['gstatus']
-    rescue
-      controller.close
-      controllers.reject{|item| item==controller}
-      break
+BEGIN { # These methods should be in another ruby script
+  def listen_controller(controller)
+    loop do
+      begin
+        gpio_status = controller.gets
+        send_status (gpio_status)
+        # Register on gstates
+        block = JSON.parse!(gpio_status)
+        uuid = block['uuid']
+        gstates[uuid] = block['gstatus']
+      rescue
+        controller.close
+        controllers.reject{|item| item==controller}
+        break
+      end
     end
   end
-end
 
-def listen_client(client)
-  loop do
-    begin
-      message = client.gets
-      send_command (message)
-    rescue
-      client.close
-      clients.reject{|item| item==client}
-      break
+  def listen_client(client)
+    loop do
+      begin
+        message = client.gets
+        send_command (message)
+      rescue
+        client.close
+        clients.reject{|item| item==client}
+        break
+      end
     end
   end
-end
 
-def send_status(message)
-  for client in clients
-    client.puts message
+  def send_status(message)
+    for client in clients
+      client.puts message
+    end
   end
-end
 
-def send_command(message)
-  for controller in controllers
-    controller.puts message
+  def send_command(message)
+    for controller in controllers
+      controller.puts message
+    end
   end
-end
+}
 
 END {
   loop do
