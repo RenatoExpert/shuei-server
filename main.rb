@@ -74,15 +74,15 @@ END {
     Thread.start(server.accept) do |newcomer|
       devaddr = newcomer.peeraddr[2]
       block = JSON.parse!(newcomer.gets)
-      puts "New connection ip:#{devaddr} block:#{block}"
-      if block['type'] == 'controller'  # In case of controller
+      type = block['type']
+      puts "New connection ip:#{devaddr} type:#{type} "
+      if type == 'controller'  # In case of controller
         controllers.append(newcomer)
         listen_controller(newcomer)
         uuid = block['uuid']
         gstatus = block['gstatus']
         gstates[uuid] = gstatus
-        puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-      elsif block ['type'] == 'client' # In case of client
+      elsif type == 'client' # In case of client
         newcomer.puts JSON.generate(gstates)
         clients.append(newcomer)
         listen_client(newcomer)
