@@ -84,8 +84,8 @@ END {
         controllers.append(newcomer)
         listen_controller(newcomer)
       elsif type == 'client' # In case of client
-        newcomer.puts JSON.generate(gstates)
         clients.append(newcomer)
+        newcomer.puts JSON.generate(gstates)
         listen_client(newcomer)
       end
     end
