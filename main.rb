@@ -39,6 +39,7 @@ END {
       timestamp = Time.now
       puts "[#{timestamp}]New connection ip:#{devaddr} block:#{block}"
       if block['type'] == 'controller'  # In case of controller
+        controllers.append(client)
         uuid = block['uuid']
         gstatus = block['gstatus']
         gstates[uuid] = gstatus
@@ -46,6 +47,7 @@ END {
         #insert_log timestamp, uuid, devaddr, gstatus, cmd
       elsif block ['type'] == 'client' # In case of client
         client.puts JSON.generate(gstates)
+        clients.append(client)
       end
     end
   end
