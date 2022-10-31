@@ -34,8 +34,13 @@ BEGIN {
 def listen_controller(controller)
   loop do
     begin
-      message = controller.gets
-      send_status (message)
+      gpio_status = controller.gets
+      send_status (gpio_status)
+      # Register on gstates
+      block = JSON.parse!(gpio_status)
+      uuid = block['uuid']
+      gstatus = block['gstatus']
+      gstates[uuid] = gstatus
     rescue
       controller.close
       controllers.reject{|item| item==controller}
@@ -79,9 +84,6 @@ END {
       if type == 'controller'  # In case of controller
         controllers.append(newcomer)
         listen_controller(newcomer)
-        uuid = block['uuid']
-        gstatus = block['gstatus']
-        gstates[uuid] = gstatus
       elsif type == 'client' # In case of client
         newcomer.puts JSON.generate(gstates)
         clients.append(newcomer)
