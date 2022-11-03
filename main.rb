@@ -32,16 +32,19 @@ BEGIN {
 }
 
 BEGIN { # These methods should be in another ruby script
-  def listen_controller(controller)
+  def listen_controller(controller, uuid)
     loop do
       begin
         gpio_status = controller.gets
-        send_status (gpio_status)
         # Register on gstates
-        block = JSON.parse!(gpio_status)
-        uuid = block['uuid']
-        gstates[uuid] = block['gstatus']
+        gstatus = JSON.parse!(gpio_status)
+        puts gstatus
+        gstates[uuid] = gstatus
+        # Update controllers
+        puts "received status #{gstatus} from #{uuid}"
+        send_status (gstates)
       rescue
+        puts "Error on controller loop #{uuid}"
         controller.close
         break
       end
@@ -76,6 +79,7 @@ BEGIN { # These methods should be in another ruby script
 END {
   loop do
     Thread.start(server.accept) do |newcomer|
+      puts "Current gstates #{gstates}"
       puts controllers
       puts clients
       devaddr = newcomer.peeraddr[2]
@@ -86,7 +90,7 @@ END {
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
           controllers.append(newcomer)
-          listen_controller(newcomer)
+          listen_controller(newcomer, uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
           clients.append(newcomer)
