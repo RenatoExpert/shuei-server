@@ -98,7 +98,7 @@ END {
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
           $clients.append(newcomer)
-          newcomer.puts JSON.generate(gstates)
+          send_status()
           listen_client(newcomer)
         end
       rescue
