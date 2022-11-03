@@ -64,8 +64,15 @@ BEGIN { # These methods should be in another ruby script
   end
 
   def send_status()
-    for client in $clients
-      client.puts $gstates
+    puts 'heey'
+    if $clients.length > 0
+      puts 'yooo'
+      for client in $clients
+        puts $gstates.to_json
+        client.puts $gstates.to_json
+      end
+    else
+      puts 'No client to send message'
     end
   end
 
@@ -87,11 +94,12 @@ END {
         if type == 'controller'  # In case of controller
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
-          controllers.append(newcomer)
+          $controllers.append(newcomer)
+          puts 'aaa'
           listen_controller(newcomer, uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
-          clients.append(newcomer)
+          $clients.append(newcomer)
           newcomer.puts JSON.generate(gstates)
           listen_client(newcomer)
         end
