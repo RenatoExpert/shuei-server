@@ -26,9 +26,9 @@ BEGIN {
   require 'json'
 
   # Stacks
-  controllers = []
-  clients = []
-  gstates = {} # A state string for each device | Receive from Controllers and send to Client
+  $controllers = []
+  $clients = []
+  $gstates = Hash[] # A state string for each device | Receive from Controllers and send to Client
 }
 
 BEGIN { # These methods should be in another ruby script
@@ -37,14 +37,14 @@ BEGIN { # These methods should be in another ruby script
       begin
         gpio_status = controller.gets
         # Register on gstates
-        gstatus = JSON.parse!(gpio_status)
+        gstatus = JSON.parse!(gpio_status)['gpio_status']
         puts gstatus
-        gstates[uuid] = gstatus
+        $gstates[:uuid] = gstatus
         # Update controllers
         puts "received status #{gstatus} from #{uuid}"
-        send_status (gstates)
-      rescue
-        puts "Error on controller loop #{uuid}"
+        send_status()
+      rescue => e
+        puts "Error on controller loop #{uuid} error:#{e}"
         controller.close
         break
       end
@@ -63,14 +63,14 @@ BEGIN { # These methods should be in another ruby script
     end
   end
 
-  def send_status(message)
-    for client in clients
-      client.puts message
+  def send_status()
+    for client in $clients
+      client.puts $gstates
     end
   end
 
   def send_command(message)
-    for controller in controllers
+    for controller in $controllers
       controller.puts message
     end
   end
@@ -79,9 +79,7 @@ BEGIN { # These methods should be in another ruby script
 END {
   loop do
     Thread.start(server.accept) do |newcomer|
-      puts "Current gstates #{gstates}"
-      puts controllers
-      puts clients
+      puts "Current gstates #{$gstates}"
       devaddr = newcomer.peeraddr[2]
       begin
         block = JSON.parse!(newcomer.gets)
