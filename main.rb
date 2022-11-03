@@ -93,7 +93,6 @@ END {
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
           $controllers.append(newcomer)
-          puts 'aaa'
           listen_controller(newcomer, uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
