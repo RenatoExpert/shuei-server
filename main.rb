@@ -39,7 +39,7 @@ BEGIN { # These methods should be in another ruby script
         # Register on gstates
         gstatus = JSON.parse!(gpio_status)['gpio_status']
         puts gstatus
-        $gstates[:uuid] = gstatus
+        $gstates["#{uuid}"] = gstatus
         # Update controllers
         puts "received status #{gstatus} from #{uuid}"
         send_status()
@@ -64,9 +64,7 @@ BEGIN { # These methods should be in another ruby script
   end
 
   def send_status()
-    puts 'heey'
     if $clients.length > 0
-      puts 'yooo'
       for client in $clients
         puts $gstates.to_json
         client.puts $gstates.to_json
