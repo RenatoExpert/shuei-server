@@ -93,7 +93,8 @@ END {
         if type == 'controller'  # In case of controller
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
-          $controllers["#{uuid}"]['socket'] = newcomer
+          $controllers["#{uuid}"]= Hash['socket' => newcomer]
+          puts "Current controllers #{$controllers}"
           listen_controller(uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
