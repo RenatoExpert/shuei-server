@@ -81,7 +81,10 @@ BEGIN { # These methods should be in another ruby script
     end
   end
 
-  def send_command(uuid, json)
+  def send_command(uuid, message)
+    puts message
+    json = message.to_json
+    puts json
     socket = $controllers["#{uuid}"]['socket']
     puts socket
     socket.puts json
