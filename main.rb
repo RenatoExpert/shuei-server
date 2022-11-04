@@ -31,7 +31,7 @@ BEGIN {
 }
 
 BEGIN { # These methods should be in another ruby script
-  def listen_controller(controller)
+  def listen_controller(uuid)
     loop do
       begin
         controller = $controllers["#{uuid}"]['socket']
