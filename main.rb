@@ -26,63 +26,93 @@ BEGIN {
   require 'json'
 
   # Stacks
-  command_stack = [] # To-do list | Receive from Client and send to Controllers
-  gstates = {} # A state string for each device | Receive from Controllers and send to Client
+  $controllers = Hash[]
+  $clients = []
+}
+
+BEGIN { # These methods should be in another ruby script
+  def listen_controller(uuid)
+    loop do
+      begin
+        controller = $controllers["#{uuid}"]['socket']
+        gpio_status = controller.gets
+        # Register on controller's gpio_status
+        gstatus = JSON.parse!(gpio_status)['gpio_status']
+        puts gstatus
+        $controllers["#{uuid}"]["gpio_status"] = gstatus
+        # Update controllers
+        puts "received status #{gstatus} from #{uuid}"
+        send_status()
+      rescue => e
+        puts "Error on controller loop #{uuid} error:#{e}"
+        controller.close
+        break
+      end
+    end
+  end
+
+  def listen_client(client)
+    loop do
+      begin
+        from_client = JSON.parse!(client.gets)
+        uuid = from_client['uuid']
+        command = from_client['command']
+        args = from_client['args']
+        to_controller = Hash['command' => command, 'args' => args]
+        puts "New command to #{uuid} >> #{to_controller}"
+        send_command(uuid, to_controller)
+      rescue
+        client.close
+        break
+      end
+    end
+  end
+
+  def send_status()
+    if $clients.length > 0
+      for client in $clients
+        puts $controllers.to_json
+        client.puts $controllers.to_json
+      end
+    else
+      puts 'No client to send message'
+    end
+  end
+
+  def send_command(uuid, message)
+    begin
+      json = message.to_json
+      controller = $controllers["#{uuid}"]['socket']
+      controller.puts json
+    rescue => e
+      puts e
+    end
+  end
 }
 
 END {
   loop do
-    Thread.start(server.accept) do |client|
-      puts "Command stack #{command_stack}"
-      timestamp = Time.now
-      devaddr = client.peeraddr[2]
-      block = JSON.parse!(client.gets)
-      ctype = block['type']
-      puts "New connection ip:#{devaddr} block:#{block}"
-      if ctype=='controller'  # In case of controller
-        begin
+    Thread.start(server.accept) do |newcomer|
+      puts "Current controllers #{$controllers}"
+      devaddr = newcomer.peeraddr[2]
+      begin
+        block = JSON.parse!(newcomer.gets)
+        type = block['type']
+        if type == 'controller'  # In case of controller
           uuid = block['uuid']
-          gstatus = block['gstatus']
-          gstates[uuid] = gstatus
-          puts "[#{timestamp}] uuid:#{uuid} ip:#{devaddr} status:#{gstatus}"
-          #insert_log timestamp, uuid, devaddr, gstatus, cmd
-          command = {
-            "cmd" => "rest"
-          }
-          for item in command_stack
-            if item["uuid"] == uuid
-              command = item
-              command_stack.delete(command)
-              break
-            end
-          end
-          client.puts JSON.generate(command)
-          if command['cmd']!='rest'
-            begin
-              exit_code = client.gets
-              puts exit_code
-              if exit_code == 0
-                puts "Pop command"
-              else
-                raise "uuid:#{uuid} Not successful"
-              # May use something to decode Unix errno, even if code runs in another OS
-              # when 1...200 etc
-              end
-            rescue
-              puts "Bad exit code"
-            ensure
-              puts "uuid #{uuid} returns #{exit_code}"
-            end
-          end
+          puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
+          $controllers["#{uuid}"]= Hash['socket' => newcomer]
+          send_status()
+          listen_controller(uuid)
+        elsif type == 'client' # In case of client
+          puts "New connection ip:#{devaddr} type:#{type}"
+          $clients.append(newcomer)
+          send_status()
+          listen_client(newcomer)
         end
-      elsif ctype=='client' # In case of client
-        commands = block['commands']
-        for command in commands
-          command_stack.append(command)
-        end
-        client.puts JSON.generate(gstates)
+      rescue
+        newcomer.close
       end
-      client.close
     end
   end
 }
