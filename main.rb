@@ -54,8 +54,11 @@ BEGIN { # These methods should be in another ruby script
   def listen_client(client)
     loop do
       begin
-        message = client.gets
-        send_command (message)
+        from_client = JSON.parse!(client.gets)
+        uuid = from_client['uuid']
+        command = from_client['command']
+        args = from_client['args']
+        send_command (uuid, Hash[command, args].to_json)
       rescue
         client.close
         break
@@ -74,10 +77,8 @@ BEGIN { # These methods should be in another ruby script
     end
   end
 
-  def send_command(message)
-    for controller in $controllers
-      controller.puts message
-    end
+  def send_command(json)
+    $controllers["#{uuid}"].puts json
   end
 }
 
