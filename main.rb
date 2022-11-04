@@ -55,13 +55,11 @@ BEGIN { # These methods should be in another ruby script
     loop do
       begin
         from_client = JSON.parse!(client.gets)
-        puts 'new command received'
         uuid = from_client['uuid']
-        puts "sending to #{uuid}"
         command = from_client['command']
         args = from_client['args']
         to_controller = Hash['command' => command, 'args' => args]
-        puts to_controller
+        puts "New command to #{uuid} >> #{to_controller}"
         send_command(uuid, to_controller)
       rescue
         client.close
@@ -82,13 +80,13 @@ BEGIN { # These methods should be in another ruby script
   end
 
   def send_command(uuid, message)
-    puts message
-    json = message.to_json
-    puts json
-    controller = $controllers["#{uuid}"]['socket']
-    puts controller
-    controller.puts json
-    puts 'sent' 
+    begin
+      json = message.to_json
+      controller = $controllers["#{uuid}"]['socket']
+      controller.puts json
+    rescue => e
+      puts e
+    end
   end
 }
 
