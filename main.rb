@@ -85,9 +85,10 @@ BEGIN { # These methods should be in another ruby script
     puts message
     json = message.to_json
     puts json
-    socket = $controllers["#{uuid}"]['socket']
-    puts socket
-    socket.puts json
+    controller = $controllers["#{uuid}"]['socket']
+    puts controller
+    controller.puts json
+    puts 'sent' 
   end
 }
 
