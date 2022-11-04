@@ -55,7 +55,9 @@ BEGIN { # These methods should be in another ruby script
     loop do
       begin
         from_client = JSON.parse!(client.gets)
+        puts 'new command received'
         uuid = from_client['uuid']
+        puts "sending to #{uuid}"
         command = from_client['command']
         args = from_client['args']
         send_command(uuid, Hash[command, args].to_json)
@@ -94,7 +96,6 @@ END {
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
           $controllers["#{uuid}"]= Hash['socket' => newcomer]
-          puts "Current controllers #{$controllers}"
           listen_controller(uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
