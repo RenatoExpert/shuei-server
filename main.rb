@@ -31,9 +31,10 @@ BEGIN {
 }
 
 BEGIN { # These methods should be in another ruby script
-  def listen_controller(controller, uuid)
+  def listen_controller(controller)
     loop do
       begin
+        controller = $controllers["#{uuid}"]['socket']
         gpio_status = controller.gets
         # Register on controller's gpio_status
         gstatus = JSON.parse!(gpio_status)['gpio_status']
@@ -57,7 +58,7 @@ BEGIN { # These methods should be in another ruby script
         uuid = from_client['uuid']
         command = from_client['command']
         args = from_client['args']
-        send_command (uuid, Hash[command, args].to_json)
+        send_command(uuid, Hash[command, args].to_json)
       rescue
         client.close
         break
@@ -77,7 +78,7 @@ BEGIN { # These methods should be in another ruby script
   end
 
   def send_command(json)
-    $controllers["#{uuid}"].puts json
+    $controllers["#{uuid}"]['socket'].puts json
   end
 }
 
@@ -92,8 +93,8 @@ END {
         if type == 'controller'  # In case of controller
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
-          $controllers["#{uuid}"]['hash'] = newcomer
-          listen_controller(newcomer, uuid)
+          $controllers["#{uuid}"]['socket'] = newcomer
+          listen_controller(uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
           $clients.append(newcomer)
