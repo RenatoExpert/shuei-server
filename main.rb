@@ -60,7 +60,7 @@ BEGIN { # These methods should be in another ruby script
         puts "sending to #{uuid}"
         command = from_client['command']
         args = from_client['args']
-        send_command(uuid, Hash[command, args].to_json)
+        send_command(uuid, Hash['command' => command, 'args' => args].to_json)
       rescue
         client.close
         break
@@ -80,7 +80,9 @@ BEGIN { # These methods should be in another ruby script
   end
 
   def send_command(json)
-    $controllers["#{uuid}"]['socket'].puts json
+    socket = $controllers["#{uuid}"]
+    puts socket
+    socket.puts json
   end
 }
 
