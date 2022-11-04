@@ -96,6 +96,7 @@ END {
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
           $controllers["#{uuid}"]= Hash['socket' => newcomer]
+          send_status()
           listen_controller(uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
