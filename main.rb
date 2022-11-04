@@ -26,7 +26,7 @@ BEGIN {
   require 'json'
 
   # Stacks
-  $controllers = []
+  $controllers = Hash[]
   $clients = []
   $gstates = Hash[] # A state string for each device | Receive from Controllers and send to Client
 }
@@ -39,7 +39,7 @@ BEGIN { # These methods should be in another ruby script
         # Register on gstates
         gstatus = JSON.parse!(gpio_status)['gpio_status']
         puts gstatus
-        $gstates["#{uuid}"] = gstatus
+        $gstates["#{uuid}"]["gstatus"] = gstatus
         # Update controllers
         puts "received status #{gstatus} from #{uuid}"
         send_status()
@@ -69,8 +69,8 @@ BEGIN { # These methods should be in another ruby script
   def send_status()
     if $clients.length > 0
       for client in $clients
-        puts $gstates.to_json
-        client.puts $gstates.to_json
+        puts $controllers.to_json
+        client.puts $controllers.to_json
       end
     else
       puts 'No client to send message'
@@ -93,7 +93,7 @@ END {
         if type == 'controller'  # In case of controller
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
-          $controllers.append(newcomer)
+          $controllers["#{uuid}"]['hash'] = newcomer
           listen_controller(newcomer, uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
