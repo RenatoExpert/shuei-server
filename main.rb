@@ -35,13 +35,13 @@ BEGIN { # These methods should be in another ruby script
     loop do
       begin
         controller = $controllers["#{uuid}"]['socket']
-        gpio_status = controller.gets
+        info_raw = controller.gets
         # Register on controller's gpio_status
-        gstatus = JSON.parse!(gpio_status)['gpio_status']
-        puts gstatus
-        $controllers["#{uuid}"]["gpio_status"] = gstatus
+		info = JSON.parse!(info_raw)
+        puts info
+        $controllers["#{uuid}"]["info"] = info
         # Update controllers
-        puts "received status #{gstatus} from #{uuid}"
+        puts "received status #{info} from #{uuid}"
         send_status()
       rescue => e
         puts "Error on controller loop #{uuid} error:#{e}"
@@ -69,10 +69,13 @@ BEGIN { # These methods should be in another ruby script
   end
 
   def send_status()
+  	clean_info = Hash[]
+	$controllers.each_pair {|uuid, value| clean_info[uuid] = value['info']}
+	puts clean_info
     if $clients.length > 0
       for client in $clients
-        puts $controllers.to_json
-        client.puts $controllers.to_json
+        puts clean_info
+        client.puts clean_info
       end
     else
       puts 'No client to send message'
@@ -102,7 +105,6 @@ END {
           uuid = block['uuid']
           puts "New connection ip:#{devaddr} type:#{type} uuid:#{uuid}"
           $controllers["#{uuid}"]= Hash['socket' => newcomer]
-          send_status()
           listen_controller(uuid)
         elsif type == 'client' # In case of client
           puts "New connection ip:#{devaddr} type:#{type}"
