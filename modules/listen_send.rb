@@ -39,15 +39,17 @@ def send_status()
 	clean_info = Hash[]
 	$controllers.each_pair {|uuid, value| clean_info[uuid] = value['info']}
 	puts clean_info
+	json_info = clean_info.to_json
 	if $clients.length > 0
 		for client in $clients
-			puts clean_info
-			client.puts clean_info
+			puts json_info
+			client.puts json_info
 		end
 	else
 		puts 'No client to send message'
 	end
 end
+
 def send_command(uuid, message)
 	begin
 		json = message.to_json
