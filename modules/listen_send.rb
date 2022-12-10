@@ -29,6 +29,7 @@ def listen_client(client)
 			puts "New command to #{uuid} >> #{to_controller}"
 			send_command(uuid, to_controller)
 		rescue
+			puts 'error with client'
 			client.close
 			break
 		end
