@@ -9,7 +9,7 @@ class ServerTest< Test::Unit::TestCase
 	assert_equal "{}\n", client.gets
 	controller.puts '{ "type": "controller", "uuid": "tester"}'
 	controller.puts '[{"sensor": "true","relay": "true","mode": "serial","theme": "heater"}, {"sensor": "false","relay": "true","mode": "paralel","theme": "light"}]'
-	assert_equal %Q({"tester"=>[{"sensor"=>"true", "relay"=>"true", "mode"=>"serial", "theme"=>"heater"}, {"sensor"=>"false", "relay"=>"true", "mode"=>"paralel", "theme"=>"light"}]}\n), client.gets
+	assert_equal %Q({"tester":[{"sensor":"true","relay":"true","mode":"serial","theme":"heater"},{"sensor":"false","relay":"true","mode":"paralel","theme":"light"}]}\n), client.gets
     client.close
 	controller.close
   end
