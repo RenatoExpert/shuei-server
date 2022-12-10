@@ -52,6 +52,7 @@ END {
           listen_client(newcomer)
         end
       rescue
+        puts 'got error'
         newcomer.close
       end
     end
